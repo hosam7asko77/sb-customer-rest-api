@@ -2,9 +2,15 @@ package com.hit.controller;
 
 import com.hit.entity.CustomerEntity;
 import com.hit.model.Customer;
+import com.hit.repository.CustomerRepostiory;
 import com.hit.service.CustomerService;
+
+import ch.qos.logback.core.joran.util.beans.BeanUtil;
+
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -29,6 +35,9 @@ public class ControllerTest {
 	
 	@MockBean
 	private CustomerService customerService;
+	
+	@MockBean
+	private CustomerRepostiory customerRepos;
 	
 	@Test
 	public void findAllCustomersEmailsTest() throws Exception {
@@ -99,7 +108,7 @@ public class ControllerTest {
 		MvcResult result = mockMvc.perform(requestBuilder).andReturn();
 		int status = result.getResponse().getStatus();
 		assertEquals(200,status);
-		
-		
 	}
+	
+	
 }

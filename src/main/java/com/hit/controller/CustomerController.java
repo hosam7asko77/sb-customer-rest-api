@@ -4,6 +4,12 @@ import com.hit.entity.CustomerEntity;
 import com.hit.exceptin.CustomerNotFoundException;
 import com.hit.model.Customer;
 import com.hit.service.CustomerService;
+
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,11 +23,21 @@ public class CustomerController {
 	@Autowired
 	CustomerService customerService;
 	
-	@GetMapping("/customers")
+	@ApiResponses({@ApiResponse(code = 200, message ="success"),
+			@ApiResponse(code = 400 , message = "Bad Request"),
+			@ApiResponse(code = 500 , message = "Servaer problem")})
+	@ApiOperation(value="This Operation is use to get all customer details")
+	@GetMapping(value="/getAll", produces = { "application/json", "application/xml" })
 	public List<CustomerEntity> retrieveAllCustomers(){
 		return customerService.findAllData();
 	}
-	@PostMapping("/customers")
+	
+	@ApiResponses({@ApiResponse(code = 200, message ="success"),
+		@ApiResponse(code = 201, message ="Created"),
+		@ApiResponse(code = 400 , message = "Bad Request"),
+		@ApiResponse(code = 500 , message = "server problem")})
+	@ApiOperation(value="This Operation is use to save customer details")
+	@PostMapping(value="/add", consumes = { "application/json", "application/xml" })
 	public ResponseEntity<String> createCustomer(@RequestBody Customer customer){
 		boolean isSaved = customerService.saveData(customer);
 		
@@ -32,8 +48,14 @@ public class CustomerController {
 		String msg = "failed to Add,Duplicated Customer ";
 		return new ResponseEntity<String>(msg, HttpStatus.BAD_REQUEST) ;
 	}
-	@GetMapping(value="/customers/{id}")
-	public Customer findOneCustomer(@PathVariable int id) {
+	
+	@ApiResponses({@ApiResponse(code = 200, message ="success"),
+		@ApiResponse(code = 400 , message = "Bad Request"),
+		@ApiResponse(code = 404 , message = "Not Found"),
+		@ApiResponse(code = 500 , message = "server problem")})
+	@ApiOperation(value="This Operation is use to get customer details based on id")
+	@GetMapping(value="/get-by-id/{id}", produces = { "application/xml", "application/json" })
+	public Customer findOneCustomer(@ApiParam(required = true, example = "123", value="This is represents Customer id") @PathVariable Integer id) {
 		Customer customer=customerService.findOne(id);
 		if(customer == null) {
 			throw new CustomerNotFoundException("Id not found -: "+id);
@@ -41,15 +63,23 @@ public class CustomerController {
 	 return customer;
 	
 	}
-	@GetMapping(value="/customer-all-emails")
+	@ApiResponses({@ApiResponse(code = 200, message ="success"),
+		@ApiResponse(code = 400 , message = "Bad Request"),
+		@ApiResponse(code = 500 , message = "problem on server")})
+	@ApiOperation(value="his Operation is use to get customers emails")
+	@GetMapping(value="/get-all-emails", produces = { "application/xml", "application/json" })
 	public List<String> findAllCustomerEmail(){
 		List<String> customer=customerService.findAllEmail();
 		return customer;
 	}
 	
-	
-	@GetMapping(value="/customer-by-email")
-	public Customer findCustimerByEmail(@RequestParam(name="email", required = true) String email) {
+	@ApiResponses({@ApiResponse(code = 200, message ="success"),
+		@ApiResponse(code = 400 , message = "Bad Request"),
+		@ApiResponse(code = 404 , message = "Not Found"),
+		@ApiResponse(code = 500 , message = "server problem")})
+	@ApiOperation(value="This Operation is use to get customer details based on email")
+	@GetMapping(value="/get-by-email", produces = { "application/xml", "application/json" })
+	public Customer findCustimerByEmail(@ApiParam(required = true, example = "exampl@gamil.com",value="This is represents Customer email")@RequestParam(name="email", required = true) String email) {
 		Customer customer=customerService.findByEmail(email);
 		if(customer==null) {
 			throw new CustomerNotFoundException("email not found-: "+email);

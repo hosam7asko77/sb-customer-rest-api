@@ -1,9 +1,25 @@
-logging:
-  level:
-    org.springframework: info 
 spring:
   profiles:
     active: qa
   jackson:
     serialization:
       write-dates-as-timestamps: false
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    shutdown:
+      enabled: true
+logging:
+  file:
+    name: /Users/hosam7asko/Spring-Boot-Work-Space/test.log
+  level:
+    org:
+      springframework: ERROR
+    com:
+      hit:
+        service: INFO
+  pattern:
+    console: null
